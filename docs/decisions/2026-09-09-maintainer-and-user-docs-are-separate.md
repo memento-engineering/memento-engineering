@@ -17,7 +17,8 @@ register:
   obsoletes: []
   updates: []
   obsoleted-by: null
-  updated-by: []
+  updated-by:
+    - agent-instructions-have-one-source
   bead: org-6dz
   legacy-id: null
 ---

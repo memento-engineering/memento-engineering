@@ -1,25 +1,73 @@
 # Agent Instructions — `memento-engineering`
 
-**This repo is PUBLIC and holds no code.** It is memento's org decision register: the decisions
-that govern the whole roster rather than any one repository.
+The org decision register. This is the ONE agent doc for this repo; `CLAUDE.md`
+imports it.
 
-`CLAUDE.md` is the full maintainer doc — read it before adding or changing an entry. It covers
-what belongs here versus in a repo's own register, the write path, and the roster-wide surface
-caveat that CI depends on. This file adds only what is not there.
+**This repo is PUBLIC, and it holds no code.** It is memento's register of decisions that govern
+the whole roster rather than any one repository.
 
-`README.md` is a **user doc**. This file and `CLAUDE.md` are **maintainer docs**. Never leak one
-into the other (`memento-engineering#maintainer-and-user-docs-are-separate`).
+The *format* — spec, schema, templates, CLI, skills, rubric — is a separate product and lives in
+[memento-engineering/decisions](https://github.com/memento-engineering/decisions). Nothing here
+reimplements it. Entries here cite it with the `decisions#<slug>` handle.
 
-## The gate
+## Maintainer docs vs. user docs
 
-No build, no tests. One check:
+This file and `AGENTS.md` are **maintainer docs**: how to work *on* this register. `README.md` is
+a **user doc**: what the register is, for someone reading it rather than editing it.
 
-```bash
-dart run lunar:lunar decisions lint docs/decisions --repo-root .
-```
+Never leak one into the other. That is itself an entry in this register —
+`org-6dz`, `memento-engineering#maintainer-and-user-docs-are-separate` — and it binds every repo
+on the roster, not just this one.
 
-Decision beads mint here with the `org-` prefix and type `decision`. Mint before the entry file
-cites the id; never guess one.
+## What belongs here, and what does not
+
+| decision reaches | register |
+|---|---|
+| one repo | that repo's own `docs/decisions/` |
+| more than one repo on the roster | **here** |
+| the decision-register format itself | `decisions` |
+
+The split is mechanical, not bookkeeping: a register's `surfaces` are resolved from the repo that
+holds it, so an entry filed in the wrong repo cannot be checked from a clean checkout. See
+`memento-engineering#org-decisions-live-in-the-org-register`.
+
+## Adding an entry
+
+Use the `decide` skill — it owns the write path (slug reservation, honest authorship, edge
+choice, bead minting, first-write validation). In short:
+
+1. Mint the bead **before** the file cites it, and never guess an id:
+   `bd create "<title>" --type decision --description "..."`
+2. Write `docs/decisions/YYYY-MM-DD-<slug>.md` carrying that id in `register.bead`.
+3. Lint before reporting done:
+   `dart run lunar:lunar decisions lint docs/decisions --repo-root .`
+
+Entries are born `status: accepted`; this profile never uses `proposed`. `status`,
+`obsoleted-by` and `updated-by` are a tooling-maintained cache — never hand-write a back-edge.
+
+## The surface caveat — read before touching CI
+
+An entry that governs other repos declares roster-wide `surfaces` such as
+`engineering.memento/*/CLAUDE.md`. Those resolve **only** on a machine where this checkout sits
+inside the umbrella directory. In a clean clone — CI included — `decisions lint` reports
+`surface.unmatched` for every one of them.
+
+That is a known, accepted gap, not a bug to paper over: roster-wide surfaces resolve at tier 2,
+where a station enumerates its mounted substations at runtime. Until that path exists,
+`.github/workflows/ci.yaml` runs the full lint and exempts exactly one diagnostic class —
+`surface.unmatched` on a surface beginning `engineering.memento/`. Everything else is fatal.
+
+Do not "fix" a red CI by narrowing a surface to something repo-local. The reach is real, and
+flattening it records something false.
+
+## The substation
+
+This repo is an armed substation on the memento roster: substation `memento-engineering`, bead
+prefix `org`, work store in `.beads` (proxied Dolt, database `org`, custom type `decision`). It is
+coded in `space_station`'s `SpaceDelegate.substations`, so it carries org App delivery and GitHub
+issue intake like every other org substation.
+
+There is no build and no test suite. The gate is the register lint above.
 
 ## Non-interactive shells
 
