@@ -1,0 +1,30 @@
+name: ci
+
+# The register is the product here — there is no library and no test suite, so
+# the gate is `decisions lint` over docs/decisions. It runs through
+# tool/lint_register.dart rather than a CLI because the `decisions` package is
+# library-only (no bin/), and because a clean checkout cannot resolve the
+# roster-wide surfaces this register legitimately declares. That tool documents
+# and enforces the one exemption; everything else is fatal.
+on:
+  merge_group:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  register:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tool
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+      - run: dart pub get
+      - run: dart analyze
+      - run: dart format --output=none --set-exit-if-changed .
+      - name: lint docs/decisions
+        run: dart run lint_register.dart
