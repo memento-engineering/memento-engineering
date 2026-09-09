@@ -7,6 +7,7 @@
 # If not set, bd init will auto-detect from directory name
 # Example: issue-prefix: "myproject" creates issues like "myproject-1", "myproject-2", etc.
 # issue-prefix: ""
+issue_prefix: org
 
 # Use no-db mode: JSONL-only, no Dolt database
 # When true, .beads/issues.jsonl is the only local store
@@ -70,3 +71,8 @@
 # Secret keys (stored in this file but prefer env vars to avoid git exposure):
 # - linear.api_key  → use LINEAR_API_KEY env var instead
 # - github.token    → use GITHUB_TOKEN env var instead
+
+# Custom issue types beyond the builtins. The org register mints `decision`
+# beads: one per entry in docs/decisions/, minted BEFORE the file cites its id.
+# Kept here as well as in the database so a fresh clone resolves the type.
+types.custom: decision
