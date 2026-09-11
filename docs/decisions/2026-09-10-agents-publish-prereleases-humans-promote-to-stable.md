@@ -13,7 +13,8 @@ register:
   obsoletes: []
   updates: []
   obsoleted-by: null
-  updated-by: []
+  updated-by:
+    - prerelease-rungs-are-dev-beta-rc-and-rc-is-human-only
   bead: org-928
   legacy-id: null
 ---
