@@ -18,7 +18,8 @@ register:
   obsoletes: []
   updates: []
   obsoleted-by: null
-  updated-by: []
+  updated-by:
+    - no-session-links-in-commits-or-pull-requests
   bead: org-gze
   legacy-id: null
 ---
