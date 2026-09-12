@@ -19,6 +19,6 @@ Entries here cite that register with the `<repo>#<slug>` handle.
 | [`docs/decisions/`](docs/decisions) | the register — one file per decision |
 | [`docs/decisions/views/`](docs/decisions/views) | rendered lineage views, generated |
 
-Roster-wide surfaces resolve at tier 2, where a station enumerates its mounted substations at
-runtime. A standalone `decisions lint` in this repo cannot verify them, so this register runs no
-surface lint in CI.
+A roster-wide surface uses `roster:<path>`, where the suffix is a repository-relative glob. It
+means "this path in every substation the roster mounts". At tier 2, the composing station resolves
+the suffix against its coded mounted roster, independent of where those repositories sit on disk.

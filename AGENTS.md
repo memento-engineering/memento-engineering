@@ -48,14 +48,14 @@ Entries are born `status: accepted`; this profile never uses `proposed`. `status
 ## The surface caveat — read before touching CI
 
 An entry that governs other repos declares roster-wide `surfaces` such as
-`engineering.memento/*/CLAUDE.md`. Those resolve **only** on a machine where this checkout sits
-inside the umbrella directory. In a clean clone — CI included — `decisions lint` reports
-`surface.unmatched` for every one of them.
+`roster:CLAUDE.md`. The suffix is a repository-relative glob, and `roster:<path>` means "this path
+in every substation the roster mounts".
 
 That is a known, accepted gap, not a bug to paper over: roster-wide surfaces resolve at tier 2,
-where a station enumerates its mounted substations at runtime. Until that path exists,
-`.github/workflows/ci.yaml` runs the full lint and exempts exactly one diagnostic class —
-`surface.unmatched` on a surface beginning `engineering.memento/`. Everything else is fatal.
+where the composing station uses its coded `SpaceDelegate.substations` roster rather than walking
+the filesystem. Until that path exists, `.github/workflows/ci.yaml` runs the full standalone lint
+and exempts exactly one diagnostic class — `surface.unmatched` whose message begins
+`surface "roster:`. Every other diagnostic, including an unmatched repo-local surface, is fatal.
 
 Do not "fix" a red CI by narrowing a surface to something repo-local. The reach is real, and
 flattening it records something false.

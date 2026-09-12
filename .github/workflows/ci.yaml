@@ -26,5 +26,6 @@ jobs:
       - run: dart pub get
       - run: dart analyze
       - run: dart format --output=none --set-exit-if-changed .
+      - run: dart test
       - name: lint docs/decisions
         run: dart run lint_register.dart

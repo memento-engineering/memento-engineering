@@ -10,8 +10,8 @@ register:
   surfaces:
     - "CLAUDE.md"
     - "AGENTS.md"
-    - "engineering.memento/*/CLAUDE.md"
-    - "engineering.memento/*/AGENTS.md"
+    - "roster:CLAUDE.md"
+    - "roster:AGENTS.md"
   obsoletes: []
   updates: ["maintainer-and-user-docs-are-separate"]
   obsoleted-by: null

@@ -5,16 +5,15 @@
 // before deciding the exit code.
 //
 // THE EXEMPTION. An entry here may govern other repos on the roster, and it
-// says so with a surface like `engineering.memento/*/CLAUDE.md`. Those globs
-// resolve only on a machine where this checkout sits inside the umbrella
-// directory, so in a clean clone — CI included — every one of them reports
-// `surface.unmatched`. That gap is recorded in
+// says so with a surface like `roster:CLAUDE.md`. The suffix is resolved at
+// tier 2 against the composing station's coded roster, so standalone lint
+// reports `surface.unmatched`. That gap is recorded in
 // `memento-engineering#org-decisions-live-in-the-org-register`: roster-wide
-// surfaces resolve at tier 2, where a station enumerates its mounted
-// substations at runtime. Until that path exists, this check exempts
-// unmatched surfaces under `engineering.memento/` and treats every other
-// diagnostic — schema, identity, edges, cached force, spec, and any
-// repo-local unmatched surface — as fatal.
+// surfaces resolve at tier 2, where a station enumerates its coded mounted
+// substations at runtime. Until that path exists, this check exempts unmatched
+// surfaces marked `roster:` and treats every other diagnostic — schema,
+// identity, edges, cached force, spec, and any repo-local unmatched surface —
+// as fatal.
 //
 // Do not widen the exemption, and do not silence a red run by narrowing a
 // surface to something repo-local: the reach is real, and flattening it
@@ -26,14 +25,29 @@ import 'dart:io';
 import 'package:decisions/decisions.dart';
 import 'package:path/path.dart' as p;
 
-/// Surfaces beginning with this prefix are roster-wide and unresolvable from a
-/// standalone checkout.
-const String _rosterWidePrefix = 'engineering.memento/';
+/// Marks a repository-relative surface applied in every mounted substation.
+const String _rosterWideSurfaceMarker = 'roster:';
 
 /// The exact shape `DecisionLintService` emits for an unmatched surface.
 bool _isRosterWideSurface(DecisionLintDiagnostic diagnostic) =>
     diagnostic.ruleId == DecisionLintRules.surfaceUnmatched &&
-    diagnostic.message.startsWith('surface "$_rosterWidePrefix');
+    diagnostic.message.startsWith('surface "$_rosterWideSurfaceMarker');
+
+/// Partitions [diagnostics] into immutable exemption and fatality lists.
+({List<DecisionLintDiagnostic> exempt, List<DecisionLintDiagnostic> fatal})
+partitionLintDiagnostics(Iterable<DecisionLintDiagnostic> diagnostics) {
+  final exempt = <DecisionLintDiagnostic>[];
+  final fatal = <DecisionLintDiagnostic>[];
+
+  for (final diagnostic in diagnostics) {
+    (_isRosterWideSurface(diagnostic) ? exempt : fatal).add(diagnostic);
+  }
+
+  return (
+    exempt: List<DecisionLintDiagnostic>.unmodifiable(exempt),
+    fatal: List<DecisionLintDiagnostic>.unmodifiable(fatal),
+  );
+}
 
 void main(List<String> arguments) {
   final repoRoot = p.normalize(
@@ -52,10 +66,7 @@ void main(List<String> arguments) {
     repoRoot: repoRoot,
   );
 
-  final exempt = result.diagnostics.where(_isRosterWideSurface).toList();
-  final fatal = result.diagnostics
-      .where((diagnostic) => !_isRosterWideSurface(diagnostic))
-      .toList();
+  final (:exempt, :fatal) = partitionLintDiagnostics(result.diagnostics);
 
   for (final diagnostic in exempt) {
     stdout.writeln(
