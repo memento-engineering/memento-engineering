@@ -11,8 +11,8 @@ register:
   slug: workspace-locks-are-never-committed-and-apps-own-their-lock
   surfaces:
     - "tool/pubspec.lock"
-    - "engineering.memento/*/.gitignore"
-    - "engineering.memento/*/pubspec.yaml"
+    - "roster:.gitignore"
+    - "roster:pubspec.yaml"
   obsoletes: []
   updates: []
   obsoleted-by: null
