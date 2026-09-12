@@ -11,9 +11,9 @@ register:
     - "README.md"
     - "CLAUDE.md"
     - "AGENTS.md"
-    - "engineering.memento/*/README.md"
-    - "engineering.memento/*/CLAUDE.md"
-    - "engineering.memento/*/AGENTS.md"
+    - "roster:README.md"
+    - "roster:CLAUDE.md"
+    - "roster:AGENTS.md"
   obsoletes: []
   updates: []
   obsoleted-by: null
@@ -75,6 +75,8 @@ register rather than in any one repo because it governs all of them.
 * Bad, because content that both audiences need is now written twice and can drift. The cost is
   accepted: a link from a user doc into maintainer material is the leak this entry forbids, so
   duplication is the honest form.
-* Neutral, because the roster-wide `surfaces` on this entry resolve only from inside the umbrella
-  directory. That is the tier-2 gap `memento-engineering#org-decisions-live-in-the-org-register`
-  already recorded and CI already exempts; it is not new here.
+* Neutral, because the explicit `roster:` marker makes the cross-repo reach independent of an
+  umbrella directory. Standalone tier 1 exempts an unmatched marked surface while keeping every
+  unmatched repo-local surface fatal; tier 2 resolves the suffix against the composing station's
+  mounted roster. That is the existing gap
+  `memento-engineering#org-decisions-live-in-the-org-register`, not a new one here.

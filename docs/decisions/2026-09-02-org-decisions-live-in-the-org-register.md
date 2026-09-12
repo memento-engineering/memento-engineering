@@ -28,12 +28,12 @@ define the format itself. Two of them do not govern that repo at all: one mandat
 `CLAUDE.md` carry the register's authority, and one directs every repo on the roster to convert
 its legacy `ADR-0000` register.
 
-That mixing had a visible cost. Those entries declare `surfaces` that climb out of the checkout —
-`engineering.memento/CLAUDE.md`, `engineering.memento/*/docs/adr/**` — so `decisions lint` could
-only resolve them on a machine where the checkout sits inside the umbrella directory. The register
-that defines the pattern failed its own lint in a clean clone, and the first CI ever added to that
-repo went red on exactly those two entries. The entanglement was legible as a build failure before
-it was legible as a filing mistake.
+That mixing had a visible cost. Those entries declared unmarked filesystem `surfaces` that climbed
+out of the checkout to name the umbrella's `CLAUDE.md` and every repository's `docs/adr/**`. A
+standalone `decisions lint` could resolve them only on a machine with that exact directory layout.
+The register that defines the pattern failed its own lint in a clean clone, and the first CI ever
+added to that repo went red on exactly those two entries. The entanglement was legible as a build
+failure before it was legible as a filing mistake.
 
 The tool repo is also becoming public so other orgs can adopt the pattern. An adopter cloning it
 should find the format and the reference implementation, not memento's roster decisions.
@@ -60,18 +60,20 @@ Decisions that govern more than one repo on the roster are recorded here. The `d
 keeps only what governs the format and its implementation.
 
 Relaxing the surface rule was rejected: it buys portability by making a typo'd surface silently
-pass, which is the case the rule exists for. Rewriting surfaces was rejected because the reach is
-real — these decisions genuinely govern other repos — and flattening that into repo-relative globs
-would record something false.
+pass, which is the case the rule exists for. Rewriting surfaces as unmarked repo-local globs was
+rejected because the reach is real — these decisions genuinely govern other repos — and flattening
+that reach would record something false. Roster-wide suffixes are repository-relative only when
+their cross-repo meaning is explicit through the `roster:` marker.
 
 ### Consequences
 
 * Good, because every register lints from its own checkout, CI included.
 * Good, because the pattern repo can go public without shipping memento's internal roster
   decisions to adopters.
-* Bad, because roster-wide surfaces are still unverifiable from a standalone checkout. They
-  resolve at tier 2, where a station enumerates its mounted substations. This register runs no
-  surface lint in CI until that path exists.
+* Bad, because roster-wide surfaces are still unverifiable at standalone tier 1. Standalone lint
+  exempts only unmatched surfaces carrying the explicit `roster:` marker and keeps every unmatched
+  repo-local surface fatal. At tier 2, the composing station resolves marked suffixes against its
+  mounted roster.
 * Neutral, because this entry `updates` the adoption clause of `decisions#the-decision-register`
   rather than editing that accepted entry: the org half of it now lives here.
 

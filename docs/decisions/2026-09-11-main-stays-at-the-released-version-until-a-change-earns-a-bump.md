@@ -8,10 +8,10 @@ register:
   spec: 1
   slug: main-stays-at-the-released-version-until-a-change-earns-a-bump
   surfaces:
-    - "engineering.memento/*/packages/*/pubspec.yaml"
-    - "engineering.memento/*/packages/*/CHANGELOG.md"
-    - "engineering.memento/*/packages/*/extension/station_overlay/*/skills/release/SKILL.md"
-    - "engineering.memento/*/AGENTS.md"
+    - "roster:packages/*/pubspec.yaml"
+    - "roster:packages/*/CHANGELOG.md"
+    - "roster:packages/*/extension/station_overlay/*/skills/release/SKILL.md"
+    - "roster:AGENTS.md"
   obsoletes: []
   updates: []
   obsoleted-by: null

@@ -8,10 +8,10 @@ register:
   spec: 1
   slug: prerelease-rungs-are-dev-beta-rc-and-rc-is-human-only
   surfaces:
-    - "engineering.memento/*/CLAUDE.md"
-    - "engineering.memento/*/AGENTS.md"
-    - "engineering.memento/*/packages/*/extension/station_overlay/*/agents/*.md"
-    - "engineering.memento/*/packages/*/extension/station_overlay/*/skills/release/SKILL.md"
+    - "roster:CLAUDE.md"
+    - "roster:AGENTS.md"
+    - "roster:packages/*/extension/station_overlay/*/agents/*.md"
+    - "roster:packages/*/extension/station_overlay/*/skills/release/SKILL.md"
   obsoletes: []
   updates:
     - agents-publish-prereleases-humans-promote-to-stable

@@ -8,9 +8,9 @@ register:
   spec: 1
   slug: legacy-register-migration
   surfaces:
-    - "engineering.memento/*/docs/adr/**"
-    - "engineering.memento/*/docs/adrs/**"
-    - "engineering.memento/*/docs/decisions/**"
+    - "roster:docs/adr/**"
+    - "roster:docs/adrs/**"
+    - "roster:docs/decisions/**"
   obsoletes: []
   updates: []
   obsoleted-by: null
