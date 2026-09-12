@@ -25,14 +25,6 @@ import 'dart:io';
 import 'package:decisions/decisions.dart';
 import 'package:path/path.dart' as p;
 
-/// Marks a repository-relative surface applied in every mounted substation.
-const String _rosterWideSurfaceMarker = 'roster:';
-
-/// The exact shape `DecisionLintService` emits for an unmatched surface.
-bool _isRosterWideSurface(DecisionLintDiagnostic diagnostic) =>
-    diagnostic.ruleId == DecisionLintRules.surfaceUnmatched &&
-    diagnostic.message.startsWith('surface "$_rosterWideSurfaceMarker');
-
 /// Partitions [diagnostics] into immutable exemption and fatality lists.
 ({List<DecisionLintDiagnostic> exempt, List<DecisionLintDiagnostic> fatal})
 partitionLintDiagnostics(Iterable<DecisionLintDiagnostic> diagnostics) {
@@ -40,7 +32,7 @@ partitionLintDiagnostics(Iterable<DecisionLintDiagnostic> diagnostics) {
   final fatal = <DecisionLintDiagnostic>[];
 
   for (final diagnostic in diagnostics) {
-    (_isRosterWideSurface(diagnostic) ? exempt : fatal).add(diagnostic);
+    (isRosterWideSurfaceUnmatched(diagnostic) ? exempt : fatal).add(diagnostic);
   }
 
   return (

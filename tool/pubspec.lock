@@ -85,11 +85,11 @@ packages:
     dependency: "direct main"
     description:
       path: "cli/dart/decisions"
-      ref: "decisions-v0.1.1"
-      resolved-ref: "5a4eba18e0e1733a0cca6dbbb138a1bb40ab0ec3"
+      ref: "decisions-v0.2.0"
+      resolved-ref: "1bcbb0aea7ca634e224e566230409d099c723a16"
       url: "https://github.com/memento-engineering/decisions.git"
     source: git
-    version: "0.1.1"
+    version: "0.2.0"
   file:
     dependency: transitive
     description:
