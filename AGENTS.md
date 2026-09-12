@@ -60,6 +60,34 @@ where a station enumerates its mounted substations at runtime. Until that path e
 Do not "fix" a red CI by narrowing a surface to something repo-local. The reach is real, and
 flattening it records something false.
 
+## Publishing — what an agent does without asking
+
+Two entries here govern this, and they bind every repo on the roster:
+`agents-publish-prereleases-humans-promote-to-stable` and
+`prerelease-rungs-are-dev-beta-rc-and-rc-is-human-only`.
+
+**An agent publishes PRERELEASES freely, with no per-release human ask.** That includes candidates:
+once a package sits at `rc`, cutting `rc.2`, `rc.3`, `rc.4` is ordinary agent work. A release here
+is a tag push, and pub.dev publishes it over trusted publishing — there is no credential and no
+classifier refusal standing in the way.
+
+**A human makes the PROMOTIONS.** Separate the two acts, because conflating them is what the
+original wording got wrong and it cost a live session on 2026-09-11:
+
+| act | example | who |
+|---|---|---|
+| Setting the rung — one-time | `beta.4` → `rc.1`, `rc.9` → `1.0.0` | **human** |
+| Publishing at a rung — repeatable | `rc.1`, `rc.2`, `rc.3` … | **agent** |
+
+`dev` → `beta` is the exception an agent owns, because its entry condition is machine-checkable:
+no breaking API change against the previous prerelease of the same target version.
+
+Nothing about this loosens the gates that carry outward or irreversible effect — merging to a
+substation's main, the first live arm of a new composition, persistence and credential changes.
+Nor does it retire the deterministic gates: the scrub, the declared-floors check and the dry-run
+all still apply, and an agent still owes a plain statement when it publishes a breaking
+prerelease.
+
 ## The substation
 
 This repo is an armed substation on the memento roster: substation `memento-engineering`, bead

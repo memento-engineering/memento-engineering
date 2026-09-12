@@ -8,8 +8,10 @@ register:
   spec: 1
   slug: prerelease-rungs-are-dev-beta-rc-and-rc-is-human-only
   surfaces:
-    - "CLAUDE.md"
-    - "AGENTS.md"
+    - "engineering.memento/*/CLAUDE.md"
+    - "engineering.memento/*/AGENTS.md"
+    - "engineering.memento/*/packages/*/extension/station_overlay/*/agents/*.md"
+    - "engineering.memento/*/packages/*/extension/station_overlay/*/skills/release/SKILL.md"
   obsoletes: []
   updates:
     - agents-publish-prereleases-humans-promote-to-stable
@@ -19,7 +21,7 @@ register:
   legacy-id: null
 ---
 
-# Prerelease rungs are dev, beta, rc — and only a human sets rc
+# Prerelease rungs are dev, beta, rc — and only a human PROMOTES to rc
 
 ## Context and Problem Statement
 
@@ -53,13 +55,22 @@ The ladder has **three rungs, per package**: `dev`, `beta`, `rc`.
   prerelease of the same target version.
 * **rc** — this exact commit ships as stable unless something surfaces.
 
-**Only a human sets `rc`.** Its entry condition is not computed: it is a person declaring intent to
-promote. This is what stops the drift by construction — a package cannot accrete two dozen
-candidates at a rung only a person can set.
+**Only a human PROMOTES to `rc`, and only a human promotes from `rc` to a non-prerelease
+version.** A promotion's entry condition is not computed: it is a person declaring intent to ship.
 
-This **narrows** the earlier decision's third clause rather than contradicting it. Rung movement is
-agent work *below* `rc`: agents walk `dev` to `beta` freely. `rc`, and the stable promotion beyond
-it, are both human-initiated.
+Separate the two acts, because conflating them is what this clause originally got wrong:
+
+* **Setting the rung** — a one-time promotion, `beta.4` → `rc.1`, or `rc.9` → `1.0.0`. **Human.**
+* **Publishing AT a rung** — repeatable, `rc.1`, `rc.2`, `rc.3` … **Agent**, with no per-release
+  ask. Once a package is stabilizing at `rc`, an agent keeps cutting candidates freely.
+
+This is what stops the drift by construction: a package cannot ENTER the candidate rung without a
+person, so `rc` cannot become a synonym for "published". It does not mean every candidate needs a
+person once the package is already there.
+
+This **narrows** the earlier decision's third clause rather than contradicting it. Rung movement
+below `rc` is agent work — agents walk `dev` to `beta` freely, on the machine-checkable condition
+above. The `beta` → `rc` promotion and the `rc` → stable promotion are the human-initiated ones.
 
 The rung is a property of **each package**, not of the wave it ships in. One package genuinely at
 `rc` while another in the same wave is still at `dev` is the normal case; a wave is a batch of
@@ -74,7 +85,10 @@ mechanism below; and the counter resets when the identifier changes — `dev.3` 
 Three mechanisms, and one explicit rejection.
 
 1. **A stale `rc` is demoted.** A package sitting at `rc` past a threshold is demoted to `beta` on
-   its next prerelease. This answers the actual complaint — that `rc` no longer carries its signal
+   its next prerelease. NOTE, measured 2026-09-11: a demote does not work on a package with higher
+   candidates already published, because semver orders `0.6.0-beta.1` BELOW `0.6.0-rc.25` and pub
+   resolves the highest — the demoted version publishes and is never selected. The demote is sound
+   only for a package whose `rc` counter is still ahead of its `beta` line. This answers the actual complaint — that `rc` no longer carries its signal
    — by making the label honest, rather than by forcing out a release nobody is waiting for.
 2. **A staleness prompt is filed as work.** Past the threshold the release machinery files a
    promotion bead. It lands on the board and competes for attention like anything else, and a human
