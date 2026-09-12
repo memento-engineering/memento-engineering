@@ -19,6 +19,7 @@ register:
   updates: []
   obsoleted-by: null
   updated-by:
+    - handoffs-are-working-memory-and-long-term-memory-stays-thin
     - no-session-links-in-commits-or-pull-requests
   bead: org-gze
   legacy-id: null
