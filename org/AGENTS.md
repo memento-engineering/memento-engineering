@@ -26,8 +26,8 @@ programs over the VM service.
 
 | Dir | Repo / remote | What it is | Read first |
 |---|---|---|---|
-| `genesis/` | `memento-engineering/genesis` (`main`) | **The substrate.** Framework-agnostic, bare-VM `Seed`→`Branch` keyed-reconcile engine (Flutter's element model extracted to pure Dart) + the layers on it (perception, taxonomy, dialogue/A2UI wire, typesetting/TUI, consent). Published to pub.dev. **Domain-free.** | `genesis/CLAUDE.md`, `genesis/docs/adr/ADR-0000`+`0001` |
-| `the_grid/` | `memento-engineering/the_grid` (`m3-runtime`) | **The orchestrator.** Dart-native reactive replacement for Gas City (`gc`) over a beads work graph: observe bd mutations → diff → typed events → reconcile → **spawn a `claude` coding agent per ready bead** in a per-bead git worktree. | `the_grid/CLAUDE.md`, `the_grid/docs/PDR.md`, `ADR-0000` |
+| `genesis/` | `memento-engineering/genesis` (`main`) | **The substrate.** Framework-agnostic, bare-VM `Seed`→`Branch` keyed-reconcile engine (Flutter's element model extracted to pure Dart) + the layers on it (perception, taxonomy, dialogue/A2UI wire, typesetting/TUI, consent). Published to pub.dev. **Domain-free.** | `genesis/CLAUDE.md`, `genesis/docs/decisions/` |
+| `the_grid/` | `memento-engineering/the_grid` (`m3-runtime`) | **The orchestrator.** Dart-native reactive replacement for Gas City (`gc`) over a beads work graph: observe bd mutations → diff → typed events → reconcile → **spawn a `claude` coding agent per ready bead** in a per-bead git worktree. | `the_grid/CLAUDE.md`, `the_grid/docs/PDR.md`, `the_grid/docs/decisions/` |
 | `genesis-grid/` | `memento-engineering/genesis` (`main`) | **Not a product — a transient clone of `genesis`** used as the_grid's dogfood *workspace* (currently ~2 commits behind genesis). Its `.grid/worktrees/` hold the unlanded features the_grid's agents built during the live arm. Edit genesis in `genesis/`, never here. | (treat as read-only scratch) |
 | `tgdog/` | local only, no remote | **the_grid's own state DB** (a "rig"): session/lifecycle beads land here so the *work source* stays pristine (A37). Its `CLAUDE.md`/`AGENTS.md` are still stock `bd init` stubs. | `tgdog/.beads/` |
 | `.github/` | `memento-engineering/.github` (`main`) | Org GitHub Pages site (`index.html`, `CNAME` → memento.engineering, `lenny.svg` mark). | — |
@@ -66,14 +66,17 @@ debugger half of "lenny debugs the_grid." Its packages are prefixed `leonard_*` 
 
 ## Org-wide invariants (hold in every repo)
 
-- **The ADR-0000 register rule.** Every repo keeps `docs/adr/ADR-0000` — a living "AI decision
-  register" for decisions an AI makes **autonomously**, with no human in the loop (an unattended
-  agent run). Such an API/naming/semantic decision, when not already covered by a ratified ADR, goes
-  in as the next `A<n>` amendment with **Status: pending**. A decision reached collaboratively with
-  Nico is already human-ratified — **do not** log it, and **never write to ADR-0000 during an
-  interactive session**; just carry it out. **Only Nico** promotes an amendment into a home ADR or
-  rejects it. Never write AI decisions directly into ADR-0001+ and never silently edit a ratified doc
-  to match your conclusion. New scope gets a doc before it gets code.
+- **The decision register rule.** Every repo keeps `docs/decisions/` — the one decision register,
+  spec-1 front matter, one file per decision. Record a placement, naming, seam, policy, or human
+  ruling there **with the `decide` skill** the moment it is made, autonomous calls and human
+  rulings alike — authorship lives in `decision-makers`, not in whether a record exists. The
+  register is maintained only through its verbs (`lunar decisions index|search|lint|obsolete|
+  update|vacate`, or the equivalent CLI in a repo without lunar composed): `obsolete` retires a
+  decision entirely, `update` records an amendment while the target stays in force, `vacate`
+  withdraws one after its successor lands. **Never hand-edit an entry's cached front matter**
+  (`obsoleted-by`, `updated-by`, `status`) — those fields are written by the verb that earns them.
+  The legacy per-repo "AI decision register" documents this rule used to describe are retired
+  (2026-09-13, `org-2ra`): the register is the only decision system now, in every repo.
 - **The "memento house set" (genesis ADR-0001 D7).** Dart `^3.11`, pub workspace + **melos** (scripts:
   `bootstrap`/`test`/`analyze`/`format`); **freezed** sealed unions + `json_serializable`; **exhaustive
   `switch` expressions** as house style; **Fakes, not mocks**; pure logic tested before IO is wired;
@@ -102,9 +105,9 @@ debugger half of "lenny debugs the_grid." Its packages are prefixed `leonard_*` 
 
 ## Working glossary — NOT yet ratified (the conflicts are real)
 
-These words mean **different things in different repos**. Until Nico locks them in (this is itself an
-ADR-0000-class decision; see ORG-REVIEW.md for the proposed resolution), assume nothing and check which
-repo you're in:
+These words mean **different things in different repos**. Until Nico locks them in (this is itself a
+decision worth recording in the register when it lands; see ORG-REVIEW.md for the proposed
+resolution), assume nothing and check which repo you're in:
 
 | Term | In lenny | In the_grid | Note |
 |---|---|---|---|
