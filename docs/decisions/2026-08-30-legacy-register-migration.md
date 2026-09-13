@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by register-is-the-only-decision-system
 date: 2026-08-30
 decision-makers: [nico, agent]
 consulted: []
@@ -13,7 +13,7 @@ register:
     - "roster:docs/decisions/**"
   obsoletes: []
   updates: []
-  obsoleted-by: null
+  obsoleted-by: register-is-the-only-decision-system
   updated-by: []
   bead: null
   legacy-id: null
