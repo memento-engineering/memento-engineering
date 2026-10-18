@@ -14,7 +14,8 @@ register:
   obsoletes: []
   updates: []
   obsoleted-by: null
-  updated-by: []
+  updated-by:
+    - homebrew-tap-token-is-visible-to-every-org-repo
   bead: org-ghu
   legacy-id: null
 ---
