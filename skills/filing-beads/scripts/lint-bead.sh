@@ -74,7 +74,9 @@ if btype in ("epic", "decision", "gate", "molecule", "message"):
 # Acceptance shape.
 items = [l for l in acc.splitlines() if l.strip().startswith("- [")]
 if acc.strip() and not items: warns.append("acceptance has no '- [ ]' items")
-gate = re.compile(r"tool/gate\.sh|\bgate\.sh\b|run(?:s)? the (?:whole |full )?gate", re.I)
+# A criterion that requires the whole gate to pass, not one that merely mentions it.
+gate = re.compile(r"(gate\.sh`?|the (?:whole |full )?gate)\s*(passes|is green|exits 0|succeeds)"
+                  r"|^\s*-\s*\[.\]\s*`?(?:bash\s+)?tool/gate\.sh`?\s*$", re.I)
 for l in items:
     if gate.search(l):
         fails.append(f"acceptance runs the whole gate (belongs in the validation plan only): {l.strip()[:90]}")
@@ -93,7 +95,7 @@ if known:
             fails.append(f"names a bead id this store does not have: {m}")
 
 # Determinacy: an undecided fork in the design or acceptance.
-for pat, why in ((r"\beither\b[^.\n]{0,80}\bor\b", "an either/or"),
+for pat, why in ((r"\beither\b(?!/or)[^.\n]{0,80}\bor\b", "an either/or"),
                  (r"\b(TBD|TODO|to be decided|open question)\b", "an undecided item"),
                  (r"\b(should we|investigate whether|figure out)\b", "a question, not a decided change")):
     for m in re.finditer(pat, design + "\n" + acc, re.I):
