@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by a-release-is-a-bump-pr-then-a-guarded-tag-push
 date: 2026-09-12
 decision-makers: [nico, refiner]
 consulted: []
@@ -15,7 +15,7 @@ register:
   obsoletes: []
   updates:
     - power_station#adr-0003-private-git-tag-releases-and-prerelease-gate
-  obsoleted-by: null
+  obsoleted-by: a-release-is-a-bump-pr-then-a-guarded-tag-push
   updated-by: []
   bead: org-pdn
   legacy-id: null
