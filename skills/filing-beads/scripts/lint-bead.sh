@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
-# lint-bead.sh: check a bead against what the grid station's intake and readiness
-# review require, before or after it is filed.
+# lint-bead.sh: check a bead against what bd requires of its type, the known filing
+# mistakes, and with --grid what a grid station's intake and readiness require.
 #
 # Usage:
-#   lint-bead.sh <bead-id>          lint a filed bead (run inside its repository)
-#   lint-bead.sh --draft <dir>      lint a draft before filing; <dir> holds
-#                                   description.md, design.md, acceptance.md and
-#                                   validation_plan.txt (any may be missing)
+#   lint-bead.sh [--grid] <bead-id>       lint a filed bead (run inside its repository)
+#   lint-bead.sh [--grid] --draft <dir>   lint a draft before filing; <dir> holds
+#                                         description.md, design.md, acceptance.md
+#                                         and validation_plan.txt (any may be missing)
+#   --grid  also apply a grid station's rules: a validation plan in metadata, and
+#           no acceptance criterion that requires the whole gate.
+# A filed bead is also run through `bd lint`, which checks the sections its type
+# requires (`bd types --sections`).
 #
 # Exit 0 when nothing FAILs (WARNs may remain), 1 on any FAIL, 2 on a usage error.
 # Requires: bd and python3 for the filed form; python3 alone for --draft.
 set -uo pipefail
 
 usage() { sed -n '2,12p' "$0" | sed 's/^# \{0,1\}//' >&2; exit 2; }
+grid=0
+if [ "${1:-}" = "--grid" ]; then grid=1; shift; fi
 [ $# -ge 1 ] || usage
 
 tmp="$(mktemp -d)"
@@ -53,7 +59,15 @@ import json, sys
 d = json.load(sys.stdin)
 if isinstance(d, dict) and "data" in d: d = d["data"]
 print("\n".join(x["id"] for x in d))' > "$tmp/known_ids" 2>/dev/null || : > "$tmp/known_ids"
+  # bd's own check of the sections the type requires.
+  bd lint "$id" --json 2>/dev/null | python3 -c '
+import json, sys
+try: d = json.load(sys.stdin)
+except ValueError: sys.exit(0)
+for r in d.get("results") or []:
+    for m in r.get("missing") or []: print(m)' > "$tmp/missing_sections" || : > "$tmp/missing_sections"
 fi
+echo "$grid" > "$tmp/grid"
 
 python3 - "$tmp" <<'PY'
 import os, re, sys
@@ -61,13 +75,16 @@ d = sys.argv[1]
 rd = lambda n: open(os.path.join(d, n)).read() if os.path.exists(os.path.join(d, n)) else ""
 desc, design, acc, plan = rd("description.md"), rd("design.md"), rd("acceptance.md"), rd("validation_plan.txt")
 me, btype = rd("id").strip(), rd("type").strip()
+grid = rd("grid").strip() == "1"
+missing = [l for l in rd("missing_sections").splitlines() if l.strip()]
 known = set(rd("known_ids").split())
 fails, warns = [], []
 
 # Intake: what the station's deterministic check requires.
 if not desc.strip(): fails.append("no description")
-if not acc.strip(): fails.append("no acceptance criteria (intake holds the bead)")
-if not plan.strip(): fails.append("no validation plan in metadata (intake holds the bead)")
+if not acc.strip(): fails.append("no acceptance criteria")
+if grid and not plan.strip(): fails.append("no validation plan in metadata (the station's intake holds the bead)")
+for m in missing: warns.append(f"bd lint: missing section {m} (bd types --sections)")
 if btype in ("epic", "decision", "gate", "molecule", "message"):
     warns.append(f"type {btype!r} is not one the station builds")
 
@@ -77,7 +94,7 @@ if acc.strip() and not items: warns.append("acceptance has no '- [ ]' items")
 # A criterion that requires the whole gate to pass, not one that merely mentions it.
 gate = re.compile(r"(gate\.sh`?|the (?:whole |full )?gate)\s*(passes|is green|exits 0|succeeds)"
                   r"|^\s*-\s*\[.\]\s*`?(?:bash\s+)?tool/gate\.sh`?\s*$", re.I)
-for l in items:
+for l in (items if grid else []):
     if gate.search(l):
         fails.append(f"acceptance runs the whole gate (belongs in the validation plan only): {l.strip()[:90]}")
 
