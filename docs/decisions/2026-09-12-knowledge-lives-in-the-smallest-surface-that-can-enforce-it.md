@@ -19,6 +19,7 @@ register:
   updates: []
   obsoleted-by: null
   updated-by:
+    - a-memory-holds-only-facts-about-one-machine-or-one-conversation
     - handoffs-are-working-memory-and-long-term-memory-stays-thin
     - no-session-links-in-commits-or-pull-requests
   bead: org-gze
