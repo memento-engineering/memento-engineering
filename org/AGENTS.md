@@ -103,6 +103,35 @@ debugger half of "lenny debugs the_grid." Its packages are prefixed `leonard_*` 
   (`gc`) still runs and assumes a single writer per bead** — any experiment against live convergence
   traffic is strictly read-only; never reconcile or mutate beads gc owns.
 
+## Working with the owner
+
+How the owner (Nico) works with agents. Each rule is a correction he gave more than once.
+
+- **A question to the owner carries the full context.** A ratification or interview question gives
+  the concrete types and values involved, the default and what names it, what the change means for
+  his own station, what it does not cover, and the alternative that follows if he says no. List an
+  entry's rules in plain words rather than summing them in a line; a thin question gets "I need
+  you to start providing more information". Batch related entries into one question.
+- **A ruling given in chat is executed by the agent.** When the owner says approve, ratify or
+  unregister, the agent runs the command, writes the stamp and sets the status. It hands back only
+  what it cannot do (a sudo prompt, a keychain or browser login) or a decision not yet made. Never
+  hand him a command he has already ruled on.
+- **Delegated agents are sized by seat, never by the session's model.** Set `model:` on every
+  delegated agent. Mechanical fan-out and scans take the smaller tiers; judging and adversarial
+  review take the middle tier; only a single hardest design call or the final synthesis warrants the
+  flagship. The owner naming a model is a preference for one seat, not for the fleet. State the
+  tiering in the launch message so he can redirect before the run spends.
+- **A delegated agent names its own model.** A prompt that asks for a `Co-Authored-By` trailer says
+  "naming your model", never a literal model name: copying the orchestrator's model into a
+  subagent's commit misattributes it.
+- **Vocabulary.** Say refine, refinement or triage for backlog work, never "groom". Say approve,
+  approved or approval for the human gate on a deferred bead, never "bless". Say "decisions
+  register" or "register" for `docs/decisions/`.
+- **The zsh traps.** Never name a zsh variable `path`: it is tied to `PATH`, and assigning it in a
+  loop makes every later command unresolvable. zsh does not word-split an unquoted variable, so
+  `set -- $var` yields one argument; pass explicit arguments to a function, or split with `${=var}`
+  or `read -r a b <<<"$var"`.
+
 ## Working glossary — NOT yet ratified (the conflicts are real)
 
 These words mean **different things in different repos**. Until Nico locks them in (this is itself a
