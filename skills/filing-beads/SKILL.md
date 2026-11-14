@@ -13,7 +13,7 @@ description: >-
 compatibility: Requires the bd CLI, run from inside the repository whose store holds the bead. The decisions CLI is used where the repository keeps a register.
 metadata:
   author: memento-engineering
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Filing beads
@@ -67,6 +67,13 @@ Progress:
 whose code it changes. `cd` into that repository and run bd there. Search first:
 `bd search "<two or three distinctive words>"`. An existing bead that covers it
 gets an edit, not a twin.
+- Search from three or four angles. A search that returns nothing is not proof
+  nobody owns the work: searches cap their results.
+- Read the closed hits too. A close reason names where a bead's leftover work
+  went ("split to X"), and that bead is often the real owner. A closed bead can
+  also have left part of its listed surface undelivered: compare its surface list
+  with what its close reason says landed, and file the missing part as a
+  follow-up that cites it (`--deps discovered-from:<id>`), not as a fresh bead.
 
 **2. Type and scope.** Run `bd types` for the types this store accepts, each with
 its meaning, and `bd types --sections` for the sections each type requires. Two
@@ -87,6 +94,15 @@ means, where the change lives, which of two designs, what happens on failure.
 with `path:line` pointers. Where the repository keeps a decision register
 (`docs/decisions/`), cite every entry that governs those surfaces, newest first:
 read [references/register.md](references/register.md).
+- **Name the primitives the package already owns.** When the change touches a
+  package with established seams (a service, a parser, a runner), name the one to
+  compose, with its `path:start-end` and the code that already uses it that way.
+  A bead that names only the defect site invites a from-scratch design. Cite
+  line ranges for large files, not bare paths: a reviewer's gathered context
+  clips a long file.
+- **Put the architecture in every child bead.** An epic's design never reaches
+  the agent that builds a child: state the target package, the dependency
+  direction and the seams not to touch in each child's own text.
 
 **5. Fields.** Read [references/fields.md](references/fields.md) for what each
 field holds and a template.
@@ -111,7 +127,13 @@ bd show <new-id> --json                            # read it back
    hold, see references/grid-station.md).
 2. Fix the finding in the field it belongs to: scope and approach in the design,
    done-ness in the acceptance. Never answer a finding only in notes; a builder
-   reads the design and the acceptance, not the notes.
+   reads the design and the acceptance, not the notes. When a ruling voids part
+   of an earlier design, rewrite the description and acceptance to carry it and
+   clear or rewrite the design too: a binding note beside a contradicting design
+   is not a decided approach.
+   - Verify a reviewer's claim before it goes into the bead. A rationale mixes
+     what the reviewer checked with framing it did not; "X is already wired" is
+     the claim most often wrong. Run the grep, `bd show` or file read yourself.
 3. A finding that needs a decision you cannot ground is the owner's. Ask (with a
    person) or note it and leave the bead held (autonomous).
 4. Lint. For a draft, then: `bd update <id> --status open --actor <you>` and
@@ -132,5 +154,15 @@ bd show <new-id> --json                            # read it back
 - Never cite a decision that the bead's own work will create. Cite what exists.
 - Never write an either/or into the design. An undecided fork is the first thing
   a reviewer holds.
+- When you fix one term in a list ("bind it to the attempt, role and fence")
+  because it names something that does not exist, check every other term in that
+  list against the code and the register. Lists are written in parallel, so the
+  defect rarely appears alone.
+- When you withdraw a design in one bead, sweep the text of every bead that
+  depends on it. Their text still describes what you withdrew, and their builders
+  will build it.
+- Never pin an exact pre-release version of a sibling package in acceptance
+  criteria. It is stale the moment a new wave publishes. Write "the version a
+  plain `pub get` resolves".
 - Run bd from the store's repository, never through `bd -C`, which can read the
   wrong store.

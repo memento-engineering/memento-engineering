@@ -31,6 +31,13 @@ When several entries cover a surface, the newest one in force is the one that
 binds. An entry with `obsoleted-by` set no longer binds; cite its successor. An
 entry with `updated-by` set is amended; read the amendments too.
 
+Grep the register for the bead's nouns (`grep -l "<noun>" docs/decisions/*.md`)
+and read the newest hits, not the one that agrees with the bead. A reviewer only
+catches a contradiction with entries it surfaces; citing an older, agreeable
+entry steers it away from the newer one that forbids the work. When a design
+document and a register entry disagree, the entry binds: cite it, and note the
+document's drift on the bead.
+
 ## When the bead changes a decision
 
 If the work contradicts a recorded decision, the bead is not ready.
