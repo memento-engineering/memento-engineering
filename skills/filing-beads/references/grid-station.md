@@ -14,6 +14,8 @@ it builds it, and holds any bead that fails.
   ```
   For one package in a workspace: `dart pub get && dart analyze && cd packages/<pkg> && dart test`.
   It runs under `sh -c` (bash 3.2 on macOS): avoid `<(…)`, and `#` inside `$(…)`.
+  Before filing, run it as the station will: `sh -c "$plan"` from the worktree
+  root, not in zsh and not one clause at a time.
 - **Intake.** Before any model reads the bead, a deterministic check holds it
   unless it has a type the station builds, a description, acceptance criteria and
   a validation plan. Lint with `scripts/lint-bead.sh --grid`.
@@ -21,6 +23,29 @@ it builds it, and holds any bead that fails.
   readiness review passes, the station stamps it itself. A bead filed open while
   the station runs can be picked up within minutes; file it deferred if it must
   wait.
+
+## Writing the plan
+
+- **Cover the consumers, not only the edited packages.** A change to a public
+  API breaks the packages that call it, and a plan scoped to the edited packages
+  stays green. Run each affected package's analyzer and whole test suite; where
+  CI runs the analyzer at the repository root, run it there too. Narrow to named
+  test files only when a whole suite will not fit, and say in the bead which
+  suite was dropped.
+- **Compare diffs three-dot:** `origin/main...HEAD`. A diff against `HEAD` is
+  empty once the builder commits.
+- **No exact file-set legs.** A leg asserting the diff equals a listed set of
+  files fails whenever the build must touch one more test. Fence the negative
+  space instead: nothing changed outside the named directories.
+- **Anchor absence checks.** `! rg 'package:x/'` also matches a test that lists
+  that string in its ban list; match the import line instead.
+- **No branch commit SHAs.** The org squash-merges, so a commit on a
+  dependency's branch never reaches main. Assert content (`test -f <path>`), or a
+  commit already on main.
+- **Do not grep accepted decision prose.** A builder may rightly record a new
+  entry instead of editing an accepted one, and the grep then fails with no
+  output. A failing plan with an empty log is a failing grep or test leg, not a
+  crash.
 
 ## Rules the station enforces
 
